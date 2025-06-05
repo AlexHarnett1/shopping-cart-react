@@ -33,7 +33,7 @@ const Product = ({ product, onDeleteProduct, onUpdateProduct, onAddProductToCart
         <p className="price">${product.price}</p>
         <p className="quantity">{product.quantity} left in stock</p>
         <div className="actions product-actions">
-          <button className="add-to-cart" onClick={handleAddToCart}>Add to Cart</button>
+          <button className="add-to-cart" disabled={product.quantity === 0} onClick={handleAddToCart}>Add to Cart</button>
           <button className="edit" onClick={() => setIsEditForm(!isEditForm)}>Edit</button>
         </div>
         <button className="delete-button" onClick={handleDeleteProduct}><span>X</span></button>
