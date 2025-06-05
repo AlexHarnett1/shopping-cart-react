@@ -8,31 +8,31 @@ interface FormProps {
 const ToggleableAddProductForm = ({ onProductFormSubmit}: FormProps) => {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState(0);
-  const [quantity, setQuantity] = useState(0)
-  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [quantity, setQuantity] = useState(0);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
     onProductFormSubmit({title, price, quantity}, formReset);
   }
 
   const formReset = (): void => {
-    setTitle('')
-    setPrice(0)
-    setQuantity(0)
+    setTitle('');
+    setPrice(0);
+    setQuantity(0);
     setIsFormOpen(false);
   }
 
   const handleFormCancel = (event: React.FormEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    formReset()
+    formReset();
   }
 
   return (
   <>
     {isFormOpen ?
       <div className="add-form">
-        <form onSubmit={ handleFormSubmit }>
+        <form onSubmit={ handleFormSubmit } aria-label="Product Form">
           <div className="input-group">
             <label htmlFor="product-name">Product Name:</label>
             <input
