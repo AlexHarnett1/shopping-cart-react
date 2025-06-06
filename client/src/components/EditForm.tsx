@@ -27,7 +27,7 @@ const EditForm = ({ product, onUpdateProduct, onHideEditForm }: EditFormProps) =
   return (
     <div className="edit-form">
       <h3>Edit Product</h3>
-      <form onSubmit={handleFormSubmit}>
+      <form onSubmit={handleFormSubmit} aria-label="Edit Product Form">
         <div className="input-group">
           <label htmlFor="product-name">Product Name</label>
           <input
