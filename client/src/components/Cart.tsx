@@ -7,7 +7,6 @@ interface CartProps {
 }
 
 const Cart = ({ cartItems, onCheckout }: CartProps) => {
-  console.log('Re render', cartItems.length)
   return (
     <div className="cart">
       <h2>Your Cart</h2>
