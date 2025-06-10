@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer, useContext } from 'react'
+import { useEffect, useReducer, useContext } from 'react'
 import ToggleableAddProductForm from './components/ToggleableAddProductForm'
 import Header from './components/Header'
 import ProductListing from './components/ProductListing'
@@ -6,57 +6,19 @@ import {
   type CartItem,
   type NewProduct,
   type Product as ProductType,
-  type ProductSortType,
-  type ProductSortState
 } from "./types.ts"
 import { addProduct, getProducts, deleteProduct, updateProduct, addProductToCart, getCartItems, checkout } from './services/products.ts'
-import { sortProducts } from './utils/utils.ts'
-import { ThemeContext, type ThemeContextType } from './providers/ThemeProvider.tsx'
-
-
-type ProductAction =
-  | { type: "SET_PRODUCTS"; payload: ProductType[] }
-  | { type: "ADD_PRODUCT"; payload: ProductType }
-  | { type: "DELETE_PRODUCT"; payload: { id: string } }
-  | { type: "UPDATE_PRODUCT"; payload: ProductType }
-  | { type: "SORT_PRODUCTS"; payload: ProductSortState};
-
-const productsReducer = (prevState: ProductType[], action: ProductAction) => {
-  switch (action.type) {
-    case "ADD_PRODUCT":
-      return [...prevState, action.payload];
-    
-    case "DELETE_PRODUCT":
-      return prevState.filter(product => product._id !== action.payload.id);
-    
-    case "UPDATE_PRODUCT":
-      return prevState.map(product =>
-        product._id === action.payload._id ? action.payload : product
-      );
-      
-    case "SET_PRODUCTS":
-      return action.payload;
-    
-    case "SORT_PRODUCTS":
-      return sortProducts(prevState, action.payload)
-    
-    default:
-      throw new Error('Incorrect type given to productsReducer.')
-  }
-}
+import { ThemeContext } from './providers/ThemeProvider.tsx'
+import { productsReducer, type ProductSortType } from './reducers/ProductReducer.ts'
 
 const cartReducer = (_prevState: CartItem[], payload: CartItem[]) => {
   return payload
 }
-
-const initialSortState: ProductSortState = { type: "name", isAscending: true }
-
 function App() {
   // const [products, setProducts] = useState<ProductType[]>([])
-  const [products, productsDispatch] = useReducer(productsReducer, [])
+  const [products, productsDispatch] = useReducer(productsReducer, { items:[], sortState: {type:"title", isAscending: true}})
   // const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [cartItems, cartItemsDispatch] = useReducer(cartReducer, [])
-  const [sortState, setSortState] = useState<ProductSortState>(initialSortState)
 
   const { isDarkMode } = useContext(ThemeContext)
   
@@ -144,25 +106,21 @@ function App() {
   }
 
   const handleChangeSortState = (type: ProductSortType) => {
-    if (sortState.type === type) {
-      setSortState({...sortState, isAscending: !sortState.isAscending})
+    if (products.sortState.type === type) {
+      productsDispatch({ type: "SORT_PRODUCTS", payload: { type, isAscending: !products.sortState.isAscending } })
     } else {
-      setSortState({type: type, isAscending: true})
+      productsDispatch({
+        type: "SORT_PRODUCTS", payload: { type, isAscending: true }})
     }
   }
-
-  useEffect(() => {
-    productsDispatch({type:"SORT_PRODUCTS", payload:sortState})
-    console.log('sort state change:', sortState)
-  }, [sortState])
 
   return (
     <div id="app">
       <Header cartItems={cartItems} onCheckout={handleCheckout} />
       <main className={isDarkMode ? "dark-mode" : ""}>
-        <ProductListing products={products} onDeleteProduct={handleDeleteProduct}
+        <ProductListing products={products.items} onDeleteProduct={handleDeleteProduct}
           onUpdateProduct={handleUpdateProduct} onAddProductToCart={handleAddProductToCart}
-          onChangeSortState={handleChangeSortState} />
+          onChangeSortState={handleChangeSortState} sortState={products.sortState}/>
         <ToggleableAddProductForm onProductFormSubmit={handleAddProduct} />
       </main>
   </div>

@@ -4,7 +4,7 @@ interface ThemeProviderProps {
   children: any
 }
 
-export interface ThemeContextType { 
+interface ThemeContextType { 
   isDarkMode: boolean, 
   handleThemeChange: () => void
 }
