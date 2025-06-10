@@ -1,5 +1,7 @@
 import Product from "./Product"
 import type { Product as ProductType, ProductSortType } from "../types"
+import { useContext } from "react";
+import { ThemeContext } from "../providers/ThemeProvider";
 
 interface ProductListingProps {
   products: ProductType[];
@@ -16,10 +18,15 @@ const ProductListing = ({
   onAddProductToCart,
   onChangeSortState
 }: ProductListingProps) => {
+
+  const { handleThemeChange } = useContext(ThemeContext)
   
   return (
     <div className="product-listing">
-      <h2>Products</h2>
+      <div className="header-row">
+        <h2>Products</h2>
+        <button onClick={handleThemeChange}>Toggle Theme</button>
+      </div>
       <div className="sort-controls">
         <label htmlFor="sort-buttons">Sort by: </label>
         <div id="sort-buttons" className="sort-buttons">

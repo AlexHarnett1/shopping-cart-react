@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer } from 'react'
+import { useEffect, useState, useReducer, useContext } from 'react'
 import ToggleableAddProductForm from './components/ToggleableAddProductForm'
 import Header from './components/Header'
 import ProductListing from './components/ProductListing'
@@ -11,6 +11,7 @@ import {
 } from "./types.ts"
 import { addProduct, getProducts, deleteProduct, updateProduct, addProductToCart, getCartItems, checkout } from './services/products.ts'
 import { sortProducts } from './utils/utils.ts'
+import { ThemeContext, type ThemeContextType } from './providers/ThemeProvider.tsx'
 
 
 type ProductAction =
@@ -56,6 +57,8 @@ function App() {
   // const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [cartItems, cartItemsDispatch] = useReducer(cartReducer, [])
   const [sortState, setSortState] = useState<ProductSortState>(initialSortState)
+
+  const { isDarkMode } = useContext(ThemeContext)
   
 
   useEffect(() => {
@@ -156,7 +159,7 @@ function App() {
   return (
     <div id="app">
       <Header cartItems={cartItems} onCheckout={handleCheckout} />
-      <main>
+      <main className={isDarkMode ? "dark-mode" : ""}>
         <ProductListing products={products} onDeleteProduct={handleDeleteProduct}
           onUpdateProduct={handleUpdateProduct} onAddProductToCart={handleAddProductToCart}
           onChangeSortState={handleChangeSortState} />

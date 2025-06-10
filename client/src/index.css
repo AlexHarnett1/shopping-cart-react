@@ -201,6 +201,13 @@ table td.total {
   padding-top: 20px;
 }
 
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .sort-controls {
   display: flex;
   align-items: center;
@@ -210,4 +217,69 @@ table td.total {
 .sort-buttons {
   display: flex;
   gap: 0.5rem;
+}
+
+.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode header {
+  background: #0d3b40;
+  color: #ffffff;
+}
+
+.dark-mode main {
+  background: #1e1e1e;
+}
+
+.dark-mode .product {
+  background: #2a2a2a;
+  color: #e0e0e0;
+}
+
+.dark-mode .product .price {
+  color: #ff8fa3;
+}
+
+.dark-mode .product .quantity.none-left {
+  color: #ff4c4c;
+}
+
+.dark-mode .product .edit-form,
+.dark-mode .add-form {
+  border-top: 1px solid #444;
+}
+
+.dark-mode button {
+  background: #0d3b40;
+  color: #ffffff;
+}
+
+.dark-mode .checkout {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.dark-mode button:disabled {
+  background: #444;
+  color: #999;
+}
+
+.dark-mode .product .delete-button {
+  background: #b00020;
+  color: #fff;
+}
+
+.dark-mode input[type="text"],
+.dark-mode input[type="number"] {
+  background: #333;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+.dark-mode input[type="text"]:focus,
+.dark-mode input[type="number"]:focus {
+  border-color: #1fa2af;
+  outline: none;
 }
