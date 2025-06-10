@@ -200,3 +200,14 @@ table td.total {
   text-align: right;
   padding-top: 20px;
 }
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+}
+.sort-buttons {
+  display: flex;
+  gap: 0.5rem;
+}

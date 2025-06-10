@@ -2,14 +2,23 @@ import { useEffect, useState, useReducer } from 'react'
 import ToggleableAddProductForm from './components/ToggleableAddProductForm'
 import Header from './components/Header'
 import ProductListing from './components/ProductListing'
-import { type CartItem, type NewProduct, type Product as ProductType } from "./types.ts"
+import {
+  type CartItem,
+  type NewProduct,
+  type Product as ProductType,
+  type ProductSortType,
+  type ProductSortState
+} from "./types.ts"
 import { addProduct, getProducts, deleteProduct, updateProduct, addProductToCart, getCartItems, checkout } from './services/products.ts'
+import { sortProducts } from './utils/utils.ts'
+
 
 type ProductAction =
   | { type: "SET_PRODUCTS"; payload: ProductType[] }
   | { type: "ADD_PRODUCT"; payload: ProductType }
   | { type: "DELETE_PRODUCT"; payload: { id: string } }
-  | { type: "UPDATE_PRODUCT"; payload: ProductType };
+  | { type: "UPDATE_PRODUCT"; payload: ProductType }
+  | { type: "SORT_PRODUCTS"; payload: ProductSortState};
 
 const productsReducer = (prevState: ProductType[], action: ProductAction) => {
   switch (action.type) {
@@ -26,6 +35,10 @@ const productsReducer = (prevState: ProductType[], action: ProductAction) => {
       
     case "SET_PRODUCTS":
       return action.payload;
+    
+    case "SORT_PRODUCTS":
+      return sortProducts(prevState, action.payload)
+    
     default:
       throw new Error('Incorrect type given to productsReducer.')
   }
@@ -35,11 +48,14 @@ const cartReducer = (_prevState: CartItem[], payload: CartItem[]) => {
   return payload
 }
 
+const initialSortState: ProductSortState = { type: "name", isAscending: true }
+
 function App() {
   // const [products, setProducts] = useState<ProductType[]>([])
   const [products, productsDispatch] = useReducer(productsReducer, [])
   // const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [cartItems, cartItemsDispatch] = useReducer(cartReducer, [])
+  const [sortState, setSortState] = useState<ProductSortState>(initialSortState)
   
 
   useEffect(() => {
@@ -124,12 +140,26 @@ function App() {
     }
   }
 
+  const handleChangeSortState = (type: ProductSortType) => {
+    if (sortState.type === type) {
+      setSortState({...sortState, isAscending: !sortState.isAscending})
+    } else {
+      setSortState({type: type, isAscending: true})
+    }
+  }
+
+  useEffect(() => {
+    productsDispatch({type:"SORT_PRODUCTS", payload:sortState})
+    console.log('sort state change:', sortState)
+  }, [sortState])
+
   return (
     <div id="app">
       <Header cartItems={cartItems} onCheckout={handleCheckout} />
       <main>
         <ProductListing products={products} onDeleteProduct={handleDeleteProduct}
-          onUpdateProduct={handleUpdateProduct} onAddProductToCart={handleAddProductToCart} />
+          onUpdateProduct={handleUpdateProduct} onAddProductToCart={handleAddProductToCart}
+          onChangeSortState={handleChangeSortState} />
         <ToggleableAddProductForm onProductFormSubmit={handleAddProduct} />
       </main>
   </div>

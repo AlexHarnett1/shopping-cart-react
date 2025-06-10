@@ -21,3 +21,10 @@ export type CartItem = z.infer<typeof cartItemSchema>;
 export type Product = z.infer<typeof productSchema>;
 
 export type NewProduct = z.infer<typeof newProductSchema>;
+
+export type ProductSortType = "name" | "price" | "quantity";
+
+export interface ProductSortState {
+  type: ProductSortType
+  isAscending: boolean
+}
