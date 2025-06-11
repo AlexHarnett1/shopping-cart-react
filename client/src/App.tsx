@@ -3,17 +3,15 @@ import ToggleableAddProductForm from './components/ToggleableAddProductForm'
 import Header from './components/Header'
 import ProductListing from './components/ProductListing'
 import {
-  type CartItem,
   type NewProduct,
   type Product as ProductType,
 } from "./types.ts"
 import { addProduct, getProducts, deleteProduct, updateProduct, addProductToCart, getCartItems, checkout } from './services/products.ts'
 import { ThemeContext } from './providers/ThemeProvider.tsx'
 import { productsReducer, type ProductSortType } from './reducers/ProductReducer.ts'
+import { cartReducer } from './reducers/CartReducer.ts'
 
-const cartReducer = (_prevState: CartItem[], payload: CartItem[]) => {
-  return payload
-}
+
 function App() {
   // const [products, setProducts] = useState<ProductType[]>([])
   const [products, productsDispatch] = useReducer(productsReducer, { items:[], sortState: {type:"title", isAscending: true}})
@@ -27,7 +25,7 @@ function App() {
     const initializeProducts = async() => {
       try {
         const data = await getProducts()
-        productsDispatch({ type: "SET_PRODUCTS", payload: data })
+        productsDispatch({ type: "GET_PRODUCTS", payload: data })
       } catch (e) {
         console.log('Error: ', e)
       }
@@ -36,7 +34,7 @@ function App() {
     const initializeCart = async () => {
       try {
         const data = await getCartItems()
-        cartItemsDispatch(data)
+        cartItemsDispatch({ type: "GET_CART_ITEMS", payload: data })
       } catch (e) {
         console.log('Error: ', e)
       }
@@ -80,17 +78,10 @@ function App() {
   const handleAddProductToCart = async (id: string) => {
     try {
       const data = await addProductToCart(id);
-      productsDispatch({ type: "UPDATE_PRODUCT", payload: data.product })
+      productsDispatch({ type: "ADD_PRODUCT_TO_CART", payload: {id} })
 
-      const index = cartItems.findIndex(item => item._id === data.cartItem._id);
-      if (index === -1) {
-        cartItemsDispatch([...cartItems, data.cartItem]);
-      } else {
-        cartItemsDispatch(cartItems.map(item =>
-          item._id === data.cartItem._id ? data.cartItem : item
-        ))
-      }
-
+      cartItemsDispatch({type: "ADD_TO_CART", payload: data.cartItem})
+      
     } catch (e) {
       console.log('Error: ',  e)
     }
@@ -99,7 +90,7 @@ function App() {
   const handleCheckout = async () => {
     try {
       await checkout()
-      cartItemsDispatch([])
+      cartItemsDispatch({type: "CLEAR_CART"})
     } catch (e) {
       console.log('Error: ', e)
     }
