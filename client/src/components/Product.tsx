@@ -1,6 +1,8 @@
+import { ThemeContext } from "../providers/ThemeProvider";
 import type { Product as ProductType } from "../types";
 import EditForm from "./EditForm";
 import React from "react";
+import { getSignFromCurrency } from "../utils/utils";
 
 interface ProductProps {
   product: ProductType;
@@ -11,6 +13,9 @@ interface ProductProps {
 
 const Product = ({ product, onDeleteProduct, onUpdateProduct, onAddProductToCart }: ProductProps) => {
   const [isEditForm, setIsEditForm] = React.useState(false)
+
+  const { currency } = React.useContext(ThemeContext)
+  const currencySign = getSignFromCurrency(currency) 
 
   const handleDeleteProduct = (e:React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -30,7 +35,7 @@ const Product = ({ product, onDeleteProduct, onUpdateProduct, onAddProductToCart
     <li className="product">
       <div className="product-details">
         <h3>{product.title}</h3>
-        <p className="price">${product.price}</p>
+        <p className="price">{currencySign}{product.price}</p>
         <p className="quantity">{product.quantity} left in stock</p>
         <div className="actions product-actions">
           <button className="add-to-cart" disabled={product.quantity === 0} onClick={handleAddToCart}>Add to Cart</button>

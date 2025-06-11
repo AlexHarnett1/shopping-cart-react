@@ -22,7 +22,7 @@ const ProductListing = ({
   sortState
 }: ProductListingProps) => {
 
-  const { handleThemeChange } = useContext(ThemeContext)
+  const { handleThemeChange, handleCurrencyChange } = useContext(ThemeContext)
   const arrow = sortState.isAscending ? "⬆" : "⬇"
 
 
@@ -30,16 +30,23 @@ const ProductListing = ({
     <div className="product-listing">
       <div className="header-row">
         <h2>Products</h2>
-        <button onClick={handleThemeChange}>Toggle Theme</button>
+        <select onChange={(e) => handleCurrencyChange(e.target.value)}>Change Currency
+          <option value="USD">USD</option>
+          <option value="EUR">EURO</option>
+          <option value="YEN">YEN</option>
+        </select>
       </div>
-      <div className="sort-controls">
-        <label htmlFor="sort-buttons">Sort by: </label>
-        <div id="sort-buttons" className="sort-buttons">
-          <button onClick={() => (onChangeSortState('title'))}>{sortState.type === "title" ? arrow : ""} Title</button>
-          <button onClick={() => (onChangeSortState('price'))}>{sortState.type === "price" ? arrow : ""} Price</button>
-          <button onClick={() => (onChangeSortState('quantity'))}>{sortState.type === "quantity" ? arrow : ""}Quantity</button>
+      <div className="header-row">
+        <div className="sort-controls">
+          <label htmlFor="sort-buttons">Sort by: </label>
+          <div id="sort-buttons" className="sort-buttons">
+            <button onClick={() => (onChangeSortState('title'))}>{sortState.type === "title" ? arrow : ""} Title</button>
+            <button onClick={() => (onChangeSortState('price'))}>{sortState.type === "price" ? arrow : ""} Price</button>
+            <button onClick={() => (onChangeSortState('quantity'))}>{sortState.type === "quantity" ? arrow : ""}Quantity</button>
           </div>
         </div>
+        <button onClick={handleThemeChange}>Toggle Theme</button>
+      </div>
       <ul className="product-list">
         {products.map(product => <Product key={product._id} product={product}
           onDeleteProduct={onDeleteProduct} onUpdateProduct={onUpdateProduct}
