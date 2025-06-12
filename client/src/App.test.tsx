@@ -1,7 +1,7 @@
 import { screen, render } from "@testing-library/react";
 import App  from "./App";
 import userEvent from "@testing-library/user-event";
-import { getProducts, getCartItems, updateProduct } from "./services/products"
+import { getProducts, getCartItems, updateProduct, addProduct, deleteProduct, addProductToCart } from "./services/products"
 
 // Updating the product closes the form
 // Adding the product closes the form and product appears
@@ -14,6 +14,8 @@ vi.mock('./services/products.ts')
 const mockGetProducts = vi.mocked(getProducts)
 const mockGetCartItems = vi.mocked(getCartItems)
 const mockUpdateProduct = vi.mocked(updateProduct)
+const mockAddProduct = vi.mocked(addProduct)
+const mockAddProductToCart = vi.mocked(addProductToCart)
 
 const products = [
   {
@@ -66,4 +68,80 @@ it("updating the product closes edit form", async () => {
   const editForm  = screen.queryByRole("textbox", {name: "Edit Product Form"})
   expect(editForm).not.toBeInTheDocument()
 })
+
+it("Adding a product closes form and product appears", async () => {
+  const newProduct =   {
+    _id: "61d754d72092473d55a809t6",
+    title: "Random Thing",
+    price: 20,
+    quantity: 8
+  }
+
+  mockAddProduct.mockResolvedValue(newProduct)
+  render(<App />);
+  
+
+  const user = userEvent.setup()
+  const addProductButton = screen.getByRole('button', {name: 'Add A Product'})
+  
+  await user.click(addProductButton)
+
+
+  await user.type(screen.getByRole('textbox', { name: 'Product Name:' }), newProduct.title)
+  await user.type(screen.getByRole('spinbutton', { name: 'Quantity:'}), newProduct.quantity.toString())
+  await user.type(screen.getByRole('spinbutton', { name: 'Price:'}), newProduct.price.toString())
+
+  const submitButton = screen.getByRole('button', { name: 'Add' })
+  await user.click(submitButton)
+
+  expect(screen.getByRole('heading', { name: 'Random Thing' })).toBeInTheDocument()
+
+  expect(screen.queryByRole('button', { name: 'Add' })).not.toBeInTheDocument()
+})
+
+
+// Deleting the product removes the product
+it("Deleting a product removes the product", async () => {
+  mockGetProducts.mockResolvedValue(products)
+  // mockDeleteProduct.mockResolvedValue()
+  render(<App/>)
+  const user = userEvent.setup()
+
+  const deleteButton = await screen.findByRole('button', { name: "X" })
+  await user.click(deleteButton)
+
+  expect(screen.queryByRole("heading", {name: "Keyboard"})).not.toBeInTheDocument()
+})
+
+// Adding to cart creates cart Item
+it("Adding to cart creates cart item", async () => {
+  const newProduct = {
+    _id: "61d754d72092473d55a809t6",
+    title: "Random Thing",
+    price: 20,
+    quantity: 8
+  }
+
+  const newCartItem = {
+    _id: "61d754d72092473d55a809t9",
+    title: "Random Thing",
+    price: 20,
+    quantity: 1,
+    productId: "61d754d72092473d55a809t6"
+  }
+
+  mockGetProducts.mockResolvedValue(products)
+  mockAddProductToCart.mockResolvedValue({product: newProduct, cartItem: newCartItem})
+  render(<App />)
+  const user = userEvent.setup()
+
+  const addToCartButton = await screen.findByRole("button", { name: "Add to Cart" })
+  
+  await user.click(addToCartButton)
+
+  expect(screen.getByText("Random Thing"))
+
+})
+
+// Checkout removes cart items
 
