@@ -1,7 +1,7 @@
 import { screen, render } from "@testing-library/react";
 import App  from "./App";
 import userEvent from "@testing-library/user-event";
-import { getProducts, getCartItems, updateProduct, addProduct, deleteProduct, addProductToCart } from "./services/products"
+import { getProducts, getCartItems, updateProduct, addProduct, addProductToCart } from "./services/products"
 
 // Updating the product closes the form
 // Adding the product closes the form and product appears
